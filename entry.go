@@ -47,6 +47,16 @@ type EntityReq struct {
 	TableDesc    []*TableDesc // 表详情
 }
 
+// 生成curd 包体的请求结构
+type PackageReq struct {
+	PackageName string // 生成文件的packagename
+	TableName string // 所生成的表名
+	FileName string // 所生成的文件名
+	StructName string // 所生成struct名字
+}
+
+
+
 // 表结构详情
 type TableDesc struct {
 	Index            int

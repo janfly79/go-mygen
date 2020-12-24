@@ -56,11 +56,11 @@ const (
 // help list
 var CmdHelp = []CmdEntity{
 	{"0", "Set build directory"},
-	{"1", "Generate the table markdown document"},
-	{"2", "Generate table structure entities"},
+	//{"1", "Generate the table markdown document"},
+	//{"2", "Generate table structure entities"},
 	{"3", "Generate CURD insert, delete, update and select"},
-	{"4", "Sets the struct mapping name"},
-	{"5", "Find or set the table name"},
+	//{"4", "Sets the struct mapping name"},
+	{"5", "show the table name"},
 	{"7, c, clear", "Clear the screen"},
 	{"8, h, help", "Show help list"},
 	{"9, q, quit", "Quit"},

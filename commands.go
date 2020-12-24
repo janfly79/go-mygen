@@ -23,10 +23,10 @@ func NewCommands(logic *Logic) *commands {
 func (c *commands) Handlers() map[string]func(args []string) int {
 	return map[string]func(args []string) int{
 		"0":     c.CustomDir,
-		"1":     c.MarkDown,
-		"2":     c.GenerateEntry,
+		//"1":     c.MarkDown,
+		//"2":     c.GenerateEntry,
 		"3":     c.GenerateCURD,
-		"4":     c.CustomFormat,
+		//"4":     c.CustomFormat,
 		"5":     c.ShowTableList,
 		"7":     c.Clean,
 		"clear": c.Clean,
@@ -69,7 +69,11 @@ func (c *commands) GenerateEntry(args []string) int {
 	line, _, _ := bufio.NewReader(os.Stdin).ReadLine()
 	switch strings.ToLower(string(line)) {
 	case "yes", "y":
+		fmt.Print("set formats string start ======== ")
 		formats = c._setFormat()
+		fmt.Println(formats)
+		fmt.Print("set formats string end ======== ")
+
 	}
 	err := c.l.CreateEntity(formats)
 	if err != nil {
@@ -85,9 +89,80 @@ func (c *commands) CustomFormat(args []string) int {
 	return 0
 }
 
+// 生成相关的curd 相关的参数
+func (c *commands) GenerateCURDReq(args []string) (p PackageReq) {
+
+	var tableName,fileName,packageName,structName string
+
+	for tableName == "" {
+		tableName = c.SetTableName(args)
+	}
+
+	for fileName == "" {
+		fileName = c.SetFileName(args)
+	}
+
+	packageName = c.SetPackageName(args)
+
+	if packageName == "" {
+		packageName = fileName
+	}
+
+	structName = c.SetStructName(args)
+
+	if structName == "" {
+		structName = fileName
+	}
+
+
+	p.TableName = tableName
+	p.FileName = fileName
+	p.PackageName = packageName
+	p.StructName = structName
+
+	return
+}
+
+// 设置packgeName
+func (c *commands) SetPackageName(args []string) string {
+	fmt.Print("Please set the package name default:file name>")
+	line, _, _ := bufio.NewReader(os.Stdin).ReadLine()
+
+	return string(line)
+}
+
+// 设置tableName
+func (c *commands) SetTableName(args []string) string {
+	fmt.Print("Please set the table name>")
+	line, _, _ := bufio.NewReader(os.Stdin).ReadLine()
+
+	return string(line)
+}
+
+// 设置FileName
+func (c *commands) SetFileName(args []string) string {
+	fmt.Print("Please set the file name >")
+	line, _, _ := bufio.NewReader(os.Stdin).ReadLine()
+
+	return string(line)
+}
+
+// 设置structName
+func (c *commands) SetStructName(args []string) string {
+	fmt.Print("Please set the struct name default:file name >")
+	line, _, _ := bufio.NewReader(os.Stdin).ReadLine()
+	return string(line)
+}
+
+
+
+
+
 //生成golang操作mysql的CRUD增删改查语句
 func (c *commands) GenerateCURD(args []string) int {
-	err := c.l.CreateCURD(formats)
+	req := c.GenerateCURDReq(args)
+	fmt.Printf("%+v\n", req)
+	err := c.l.CreateCURD(formats, req)
 	if err != nil {
 		log.Println("GenerateCURD>>", err.Error())
 	}
@@ -118,11 +193,11 @@ func (c *commands) ShowTableList(args []string) int {
 		return 0
 	}
 	c._showTableList(c.l.DB.Tables)
-	fmt.Print("Select the table sequence number you need?(By default all, comma separated,all represents all)>")
-	line, _, _ := bufio.NewReader(os.Stdin).ReadLine()
-	if !strings.EqualFold(string(line), "") {
-		c.l.DB.DoTables = c._filterTables(string(line), c.l.DB.Tables)
-	}
+	//fmt.Print("Select the table sequence number you need?(By default all, comma separated,all represents all)>")
+	//line, _, _ := bufio.NewReader(os.Stdin).ReadLine()
+	//if !strings.EqualFold(string(line), "") {
+	//	c.l.DB.DoTables = c._filterTables(string(line), c.l.DB.Tables)
+	//}
 	return 0
 }
 
