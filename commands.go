@@ -22,10 +22,10 @@ func NewCommands(logic *Logic) *commands {
 //映射相应的命令
 func (c *commands) Handlers() map[string]func(args []string) int {
 	return map[string]func(args []string) int{
-		"0":     c.CustomDir,
+		"0": c.CustomDir,
 		//"1":     c.MarkDown,
 		//"2":     c.GenerateEntry,
-		"3":     c.GenerateCURD,
+		"3": c.GenerateCURD,
 		//"4":     c.CustomFormat,
 		"5":     c.ShowTableList,
 		"7":     c.Clean,
@@ -92,7 +92,7 @@ func (c *commands) CustomFormat(args []string) int {
 // 生成相关的curd 相关的参数
 func (c *commands) GenerateCURDReq(args []string) (p PackageReq) {
 
-	var tableName,fileName,packageName,structName string
+	var tableName, fileName, packageName, structName string
 
 	for tableName == "" {
 		tableName = c.SetTableName(args)
@@ -113,7 +113,6 @@ func (c *commands) GenerateCURDReq(args []string) (p PackageReq) {
 	if structName == "" {
 		structName = fileName
 	}
-
 
 	p.TableName = tableName
 	p.FileName = fileName
@@ -154,10 +153,6 @@ func (c *commands) SetStructName(args []string) string {
 	return string(line)
 }
 
-
-
-
-
 //生成golang操作mysql的CRUD增删改查语句
 func (c *commands) GenerateCURD(args []string) int {
 	req := c.GenerateCURDReq(args)
@@ -166,7 +161,7 @@ func (c *commands) GenerateCURD(args []string) int {
 	if err != nil {
 		log.Println("GenerateCURD>>", err.Error())
 	}
-	go Gofmt(GetExeRootDir())
+	go Gofmt(c.l.GetFilePath(req))
 	return 0
 }
 

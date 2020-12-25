@@ -79,7 +79,7 @@ func (l *Logic) CreateCURD(formatList []string, packreq PackageReq) (err error) 
 		req.Pkg = PkgDbModels
 		req.EntityPkg = PkgEntity
 		// 生成基础信息
-		err = l.GenerateBiliDBEntity(req)
+		err = l.GenerateBiliDBEntity(req, packreq)
 		if err != nil {
 			return err
 		}
@@ -233,18 +233,23 @@ package mysql
 	return
 }
 
-func (l *Logic) GenerateBiliDBEntity(req *EntityReq) (err error){
+func (l *Logic) GetFilePath(packreq PackageReq) string {
+	return l.GetBiliDir() + packreq.FileName + ".go"
+}
+
+func (l *Logic) GenerateBiliDBEntity(req *EntityReq, packreq PackageReq) (err error) {
 	l.l.Lock()
 	defer l.l.Unlock()
 	var s string
-	s = fmt.Sprintf(`// 判断package是否加载过
+	s = fmt.Sprintf(`// %s
 package %s
 import (
 	"context"
+	"time"
 
 	"sniper/util/db"
 )
-`, req.TableName)
+`, req.TableComment, req.TableName)
 
 	// 判断import是否加载过
 	check := "sniper/util/db"
@@ -254,12 +259,12 @@ import (
 
 	// 声明表结构变量
 	TableData := new(TableInfo)
-	TableData.Table = l.T.Capitalize(req.TableName)
+	TableData.Table = packreq.StructName
 	TableData.NullTable = TableData.Table + DbNullPrefix
 	TableData.TableComment = AddToComment(req.TableComment, "")
 	TableData.TableCommentNull = AddToComment(req.TableComment, " Null Entity")
 	// 判断表结构是否加载过
-	if l.T.CheckFileContainsChar(req.EntityPath, "type "+TableData.Table+" struct") == true {
+	if l.T.CheckFileContainsChar(req.EntityPath, "type "+packreq.StructName+" struct") == true {
 		log.Println(req.EntityPath + " It already exists. Please delete it and regenerate it")
 		return
 	}
@@ -294,8 +299,6 @@ import (
 	}
 	return
 }
-
-
 
 // 创建结构实体
 func (l *Logic) GenerateDBEntity(req *EntityReq) (err error) {
@@ -356,7 +359,6 @@ import (
 	}
 	return
 }
-
 
 // 生成C增,U删,R查,D改,的文件
 func (l *Logic) GenerateBiliCURDFile(tableName, tableComment string, tableDesc []*TableDesc, packreq PackageReq) (err error) {
@@ -423,7 +425,7 @@ func (l *Logic) GenerateBiliCURDFile(tableName, tableComment string, tableDesc [
 		TableName:           tableName,
 		PrimaryKey:          AddQuote(PrimaryKey),
 		PrimaryType:         primaryType,
-		StructTableName:     l.T.Capitalize(packreq.StructName),
+		StructTableName:     packreq.StructName,
 		NullStructTableName: l.T.Capitalize(tableName) + DbNullPrefix,
 		PkgEntity:           PkgEntity + ".",
 		PkgTable:            PkgTable + ".",
@@ -449,7 +451,6 @@ func (l *Logic) GenerateBiliCURDFile(tableName, tableComment string, tableDesc [
 	}
 	return
 }
-
 
 // 生成C增,U删,R查,D改,的文件
 func (l *Logic) GenerateCURDFile(tableName, tableComment string, tableDesc []*TableDesc) (err error) {
@@ -684,9 +685,6 @@ func (l *Logic) GenerateError() (err error) {
 	return
 }
 
-
-
-
 // 生成SQL文件
 func (l *Logic) GenerateBiliSQL(info *SqlInfo, tableComment string, packreq PackageReq) (err error) {
 	// 写入表名
@@ -730,8 +728,6 @@ import (
 	}
 	return
 }
-
-
 
 // 生成SQL文件
 func (l *Logic) GenerateSQL(info *SqlInfo, tableComment string) (err error) {

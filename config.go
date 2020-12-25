@@ -6,8 +6,8 @@ const (
 	ProjectName = "go-mygen"
 	Version     = "v3.3.9"
 	Copyright   = "2020.12"
-	Author      = "百里"
-	AuthorEmail = "freeit@126.com"
+	Author      = "**"
+	AuthorEmail = "***"
 )
 
 const (

@@ -10,7 +10,7 @@ const (
 
 // 添加
 func Add(ctx context.Context, value {{.StructTableName}})(lastId int64, err error) {
-    conn := db.Get(ctx, "comic")
+    conn := db.Get(ctx, {{.StructTableName}}_DB)
     sql := "INSERT INTO {{.TableName}} ({{.InsertFieldList}}) " +
         "VALUES ({{.InsertMark}})"
     q := db.SQLInsert("{{.TableName}}", sql)
@@ -26,7 +26,7 @@ func Add(ctx context.Context, value {{.StructTableName}})(lastId int64, err erro
 
 // 删除单条记录
 func Del(ctx context.Context, where string, args []interface{}) (err error) {
-    conn := db.Get(ctx, "comic")
+    conn := db.Get(ctx, {{.StructTableName}}_DB)
 	sql := "delete from {{.TableName}} " + where
 	q := db.SQLDelete("{{.TableName}}", sql)
 
@@ -35,8 +35,9 @@ func Del(ctx context.Context, where string, args []interface{}) (err error) {
 }
 
 // 获取单条记录
-func Get(ctx context.Context, sqlText string, args []interface{})(row {{.StructTableName}}, err error){
-    conn := db.Get(ctx, "comic")
+func Get(ctx context.Context, fields string, where string, args []interface{})(row {{.StructTableName}}, err error){
+    conn := db.Get(ctx, {{.StructTableName}}_DB)
+    sqlText := "select " + fields + " from {{.TableName}} " + where
     q := db.SQLSelect("{{.TableName}}", sqlText)
     err = conn.QueryRowContext(ctx, q, args...).Scan(
             		{{range .NullFieldsInfo}}&row.{{.HumpName}},// {{.Comment}}
@@ -45,16 +46,18 @@ func Get(ctx context.Context, sqlText string, args []interface{})(row {{.StructT
 }
 
 // 更新
-func Update(ctx context.Context, sqlText string, args []interface{})(err error) {
-    conn := db.Get(ctx, "comic")
+func Update(ctx context.Context, updateStr string, where string, args []interface{})(err error) {
+    conn := db.Get(ctx, {{.StructTableName}}_DB)
+    sqlText := "update {{.TableName}} set " + updateStr + " " + where
     q := db.SQLUpdate("{{.TableName}}", sqlText)
     _, err = conn.ExecContext(ctx, q, args...)
     return
 }
 
 // 列表
-func List(ctx context.Context, sqlText string, args []interface{})(rowsResult []{{.StructTableName}}, err error) {
-    conn := db.Get(ctx, "comic")
+func List(ctx context.Context, fields string, where string, args []interface{})(rowsResult []{{.StructTableName}}, err error) {
+    conn := db.Get(ctx, {{.StructTableName}}_DB)
+    sqlText := "select " + fields + " from {{.TableName}} " + where
     q := db.SQLSelect("{{.TableName}}", sqlText)
     rows, err := conn.QueryContext(ctx, q, args...)
     if err != nil {
@@ -80,8 +83,8 @@ func List(ctx context.Context, sqlText string, args []interface{})(rowsResult []
 
 // 总数
 func Count(ctx context.Context, where string, args []interface{}) (total int32, err error){
-    conn := db.Get(ctx, "comic")
-    sqlText := "select count(*) from {{.TableName}} where " + where
+    conn := db.Get(ctx, {{.StructTableName}}_DB)
+    sqlText := "select count(*) from {{.TableName}} " + where
     q := db.SQLSelect("{{.TableName}}", sqlText)
     err = conn.QueryRowContext(ctx, q, args...).Scan(&total)
 
