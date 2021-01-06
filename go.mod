@@ -1,4 +1,4 @@
-module github.com/yezihack/go-mygen
+module github.com/janfly79/go-mygen
 
 go 1.13
 

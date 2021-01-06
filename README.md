@@ -1,7 +1,3 @@
-[![Build Status](https://travis-ci.org/yezihack/go-mygen.svg?branch=master)](https://travis-ci.org/yezihack/go-mygen) [![](https://img.shields.io/github/stars/yezihack/go-mygen)](https://github.com/yezihack/go-mygen/stargazers)[![](https://img.shields.io/github/issues/yezihack/go-mygen)](https://github.com/yezihack/go-mygen/issues) [![](https://img.shields.io/github/forks/yezihack/go-mygen)](https://github.com/yezihack/go-mygen/network/members) [![](https://img.shields.io/github/license/yezihack/go-mygen)](https://github.com/yezihack/go-mygen/blob/3.1.0beta/LICENSE)
-
-![](assets/img/golang.png)
-
 # go-mygen
 > Code generator tools with MYSQL,avoid ORM performance penalty, 
 > Go-mygen is a tool that automatically generates MySQL table entities,CRUD and Markdown documents.
@@ -11,11 +7,17 @@
 ## Install
 > \>= go1.13.0
 ```
-go get -u -x github.com/yezihack/go-mygen
-```
+go get -u -x github.com/janfly79/go-mygen
 
-## Using v3.3.9 releases
-> [release](https://github.com/yezihack/go-mygen/releases/tag/v3.3.9)
+or
+
+git clone https://github.com/janfly79/go-mygen.git
+cd go-mygen/
+go run ./ -h
+go build -a -o $GOBIN/go-mygen
+
+
+```
 
 ## Version information
 [go-mygen](CHANGELOG.md)
